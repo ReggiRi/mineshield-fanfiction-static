@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Статистика фанфиков</title>
+  <meta name="description" content="Сбор статистики по выгрузке фанфиков за выбранный промежуток времени. Работает в браузере, без сервера.">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="page-header">
+    <div class="container">
+      <h1>Статистика фанфиков</h1>
+      <p class="subtitle">Вставьте таблицу, выберите промежуток — сайт отсечёт лишнее и посчитает статистику. Данные не покидают браузер.</p>
+    </div>
+  </header>
+
+  <main class="container">
+
+    <section class="card" id="input-card">
+      <h2><span class="step">1</span> Таблица</h2>
+      <p class="muted">Поддерживается выгрузка ficbook (CSV/TSV) и обычная таблица с заголовками: название, автор, направленность, рейтинг, статус, дата, слова, страницы, части.</p>
+
+      <label class="field-label" for="raw-input">Вставьте таблицу</label>
+      <textarea id="raw-input" class="raw-input" spellcheck="false" placeholder="Вставьте сюда CSV/TSV или содержимое таблицы…"></textarea>
+
+      <div class="row wrap">
+        <input type="file" id="file-input" accept=".csv,.tsv,.txt,text/csv,text/tab-separated-values,text/plain" hidden>
+        <button type="button" id="choose-file" class="btn">Загрузить файл</button>
+        <button type="button" id="parse-btn" class="btn btn-primary">Разобрать таблицу</button>
+        <button type="button" id="reset-btn" class="btn btn-ghost">Сбросить</button>
+      </div>
+
+      <div id="parse-status" class="status" role="status" aria-live="polite"></div>
+      <div id="data-info" class="data-info"></div>
+    </section>
+
+    <section class="card" id="period-card" hidden>
+      <h2><span class="step">2</span> Промежуток времени</h2>
+      <p class="muted">Границы включительно. Работы раньше начала периода убираются сразу. Работы позже конца периода показываются отдельно — их можно оставить вручную.</p>
+
+      <div class="row wrap period-row">
+        <label class="date-field">С
+          <input type="date" id="start-date">
+        </label>
+        <label class="date-field">По
+          <input type="date" id="end-date">
+        </label>
+        <button type="button" id="process-btn" class="btn btn-primary">Обработать</button>
+      </div>
+
+      <div id="period-status" class="status" role="status" aria-live="polite"></div>
+    </section>
+
+    <section class="card" id="review-card" hidden>
+      <h2><span class="step">3</span> Работы позже периода</h2>
+      <p class="muted">Эти работы выпадают из промежутка со стороны конца. По умолчанию они не учитываются. Отметьте те, которые нужно <strong>оставить</strong> в статистике.</p>
+
+      <div class="row wrap">
+        <button type="button" id="select-all" class="btn btn-small">Отметить все</button>
+        <button type="button" id="select-none" class="btn btn-small">Снять все</button>
+        <span id="review-info" class="review-info"></span>
+      </div>
+
+      <div id="review-list" class="review-list"></div>
+    </section>
+
+    <section class="card" id="excluded-card" hidden>
+      <h2>Отсечено до начала периода</h2>
+      <div id="excluded-before"></div>
+    </section>
+
+    <section id="stats" hidden>
+      <div class="row stats-head">
+        <h2>Статистика</h2>
+        <div class="row wrap">
+          <button type="button" id="copy-report" class="btn btn-primary">Скопировать отчёт</button>
+          <span id="report-status" class="report-status" role="status" aria-live="polite"></span>
+        </div>
+      </div>
+
+      <div id="summary" class="summary-grid"></div>
+
+      <div class="grid-2">
+        <section class="card">
+          <h3>Авторы с более чем одной работой</h3>
+          <div id="multi-authors"></div>
+        </section>
+
+        <section class="card">
+          <h3>По направленности</h3>
+          <div id="by-direction"></div>
+        </section>
+
+        <section class="card">
+          <h3>По рейтингу</h3>
+          <div id="by-rating"></div>
+        </section>
+
+        <section class="card">
+          <h3>По статусу</h3>
+          <div id="by-status"></div>
+        </section>
+
+        <section class="card">
+          <h3>Завершённые работы по числу частей</h3>
+          <div id="completed-parts"></div>
+        </section>
+
+        <section class="card">
+          <h3>Длина завершённых работ</h3>
+          <div id="completed-length"></div>
+        </section>
+      </div>
+
+      <section class="card">
+        <h3>Вошедшие работы</h3>
+        <div id="included-list"></div>
+      </section>
+    </section>
+
+  </main>
+
+  <footer class="page-footer">
+    <div class="container muted">
+      Статистика считается локально в браузере. Сайт можно разместить на GitHub Pages.
+    </div>
+  </footer>
+
+  <script src="parser.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
